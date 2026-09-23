@@ -96,9 +96,36 @@ const seedData = async () => {
       isVerified: true
     });
 
+    const chairhubAdmin = await User.create({
+      name: 'ChairHub Admin',
+      email: 'admin@chairhub.com',
+      password: 'adminpassword123',
+      role: 'admin',
+      isVerified: true
+    });
+
     const customer = await User.create({
       name: 'Jane Doe',
       email: 'customer@Ergosoul.com',
+      password: 'customerpassword123',
+      role: 'customer',
+      isVerified: true,
+      addresses: [
+        {
+          street: '456 Luxury Lane, Suite 10',
+          city: 'Beverly Hills',
+          state: 'California',
+          zipCode: '90210',
+          country: 'United States',
+          phoneNumber: '+1-555-0199',
+          isDefault: true
+        }
+      ]
+    });
+
+    const chairhubCustomer = await User.create({
+      name: 'Jane Doe',
+      email: 'customer@chairhub.com',
       password: 'customerpassword123',
       role: 'customer',
       isVerified: true,
