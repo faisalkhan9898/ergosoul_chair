@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { FaTicketAlt, FaTrashAlt } from 'react-icons/fa';
 import API from '../services/api';
+import { useCurrency } from '../hooks/useCurrency';
 
 export const AdminCoupons = () => {
+  const { currencySymbol, formatPrice } = useCurrency();
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [code, setCode] = useState('');
@@ -116,7 +118,7 @@ export const AdminCoupons = () => {
                 className="w-full p-2.5 border rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white outline-none"
               >
                 <option value="percentage">Percentage (%)</option>
-                <option value="flat">Flat Value ($)</option>
+                <option value="flat">Flat Value ({currencySymbol})</option>
               </select>
             </div>
 
@@ -132,7 +134,7 @@ export const AdminCoupons = () => {
             </div>
 
             <div className="space-y-1">
-              <span>Min Purchase ($ - Optional)</span>
+              <span>Min Purchase ({currencySymbol} - Optional)</span>
               <input
                 type="number"
                 value={minPurchase}
@@ -186,9 +188,11 @@ export const AdminCoupons = () => {
                       <td className="p-4 font-mono font-bold uppercase text-amber-500">{c.code}</td>
                       <td className="p-4 font-semibold text-gray-700 dark:text-gray-200">
                         {c.discountAmount}
-                        {c.discountType === 'percentage' ? '%' : ' USD'}
+                        {c.discountType === 'percentage' ? '%' : ` ${currencySymbol}`}
                       </td>
-                      <td className="p-4 text-gray-400">${c.minPurchase}</td>
+                      <td className="p-4 text-gray-400">
+                        {c.minPurchase ? `${currencySymbol}${c.minPurchase}` : '-'}
+                      </td>
                       <td className="p-4 text-gray-400">{new Date(c.expiresAt).toLocaleDateString()}</td>
                       <td className="p-4 text-center">
                         <button

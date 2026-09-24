@@ -1,4 +1,5 @@
 const Category = require('../models/category.model');
+const { uploadToCloudinaryOrLocal } = require('../middleware/upload.middleware');
 
 // @desc    Get active categories (Public)
 // @route   GET /api/categories
@@ -29,7 +30,11 @@ const getAllCategories = async (req, res, next) => {
 // @access  Admin
 const createCategory = async (req, res, next) => {
   try {
-    const { name, icon, image, subcategories, displayOrder, isActive } = req.body;
+    let { name, icon, image, subcategories, displayOrder, isActive } = req.body;
+
+    if (req.file) {
+      image = await uploadToCloudinaryOrLocal(req.file);
+    }
 
     if (!name || !name.trim()) {
       return res.status(400).json({ success: false, message: 'Department name is required' });
@@ -54,8 +59,8 @@ const createCategory = async (req, res, next) => {
       icon: icon || '📦',
       image: image || '',
       subcategories: parsedSubs,
-      displayOrder: displayOrder || 0,
-      isActive: isActive !== undefined ? isActive : true
+      displayOrder: displayOrder ? Number(displayOrder) : 0,
+      isActive: isActive !== undefined ? (isActive === 'true' || isActive === true) : true
     });
 
     res.status(201).json({ success: true, category });
@@ -77,13 +82,17 @@ const updateCategory = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Category not found' });
     }
 
-    const { name, icon, image, subcategories, displayOrder, isActive } = req.body;
+    let { name, icon, image, subcategories, displayOrder, isActive } = req.body;
+
+    if (req.file) {
+      image = await uploadToCloudinaryOrLocal(req.file);
+    }
 
     if (name !== undefined) category.name = name.trim();
     if (icon !== undefined) category.icon = icon;
     if (image !== undefined) category.image = image;
-    if (displayOrder !== undefined) category.displayOrder = displayOrder;
-    if (isActive !== undefined) category.isActive = isActive;
+    if (displayOrder !== undefined) category.displayOrder = Number(displayOrder);
+    if (isActive !== undefined) category.isActive = (isActive === 'true' || isActive === true);
 
     if (subcategories !== undefined) {
       if (Array.isArray(subcategories)) {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { FaLayerGroup, FaTrashAlt, FaEdit, FaCheckCircle, FaTimesCircle, FaPlus, FaTimes } from 'react-icons/fa';
-import API from '../services/api';
+import { FaLayerGroup, FaTrashAlt, FaEdit, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import API, { getImageUrl } from '../services/api';
+import ImageUploadField from '../components/ImageUploadField';
 
 export const AdminCategories = () => {
   const [categories, setCategories] = useState([]);
@@ -187,24 +188,12 @@ export const AdminCategories = () => {
               </div>
             </div>
 
-            <div className="space-y-1">
-              <span>Cover Image URL</span>
-              <input
-                type="text"
-                placeholder="https://images.unsplash.com/..."
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-                className="w-full p-2.5 border rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white outline-none"
-              />
-              {image && (
-                <img
-                  src={image}
-                  alt="Preview"
-                  className="mt-2 w-full h-24 object-cover rounded-lg border dark:border-gray-800"
-                  onError={(e) => e.target.style.display = 'none'}
-                />
-              )}
-            </div>
+            <ImageUploadField
+              label="Cover Image"
+              subtitle="For Homepage Carousel"
+              value={image}
+              onChange={setImage}
+            />
 
             <div className="space-y-1">
               <span>Subcategories <span className="text-gray-400 text-[10px] font-normal">(comma-separated)</span></span>
@@ -280,7 +269,7 @@ export const AdminCategories = () => {
                             <h4 className="font-bold text-amber-500">{cat.name}</h4>
                             {cat.image && (
                               <img
-                                src={cat.image}
+                                src={getImageUrl(cat.image)}
                                 alt={cat.name}
                                 className="mt-1 w-20 h-10 object-cover rounded border dark:border-gray-800"
                               />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaClock, FaUser } from 'react-icons/fa';
-import API from '../services/api';
+import API, { getImageUrl } from '../services/api';
 
 export const BlogDetail = () => {
   const { slug } = useParams();
@@ -73,7 +73,7 @@ export const BlogDetail = () => {
 
       {/* Large Featured Image */}
       <div className="rounded-3xl overflow-hidden aspect-[16/9] shadow-premium bg-gray-50">
-        <img src={blog.image} alt={blog.title} className="w-full h-full object-cover" />
+        <img src={getImageUrl(blog.image)} alt={blog.title} className="w-full h-full object-cover" />
       </div>
 
       {/* Content */}

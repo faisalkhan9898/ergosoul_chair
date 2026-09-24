@@ -1,7 +1,9 @@
 import { useSelector } from 'react-redux';
 
 export const useCurrency = () => {
-  const { selectedCurrency } = useSelector((state) => state.currency);
+  const { selectedCurrency, currencies } = useSelector((state) => state.currency);
+  const defaultCurrency = currencies?.find((c) => c.isDefault) || selectedCurrency || { code: 'INR', symbol: '₹', exchangeRate: 1.0 };
+  const currencySymbol = selectedCurrency?.symbol || defaultCurrency?.symbol || '₹';
 
   const convertPrice = (amount) => {
     const num = Number(amount) || 0;
@@ -11,7 +13,7 @@ export const useCurrency = () => {
 
   const formatPrice = (amount) => {
     const converted = convertPrice(amount);
-    const symbol = selectedCurrency?.symbol || '$';
+    const symbol = currencySymbol;
     
     // Format options: if currency has decimals or if exchange rate makes it small
     // For INR/EUR/GBP, general formatting:
@@ -25,6 +27,8 @@ export const useCurrency = () => {
 
   return {
     selectedCurrency,
+    defaultCurrency,
+    currencySymbol,
     convertPrice,
     formatPrice
   };

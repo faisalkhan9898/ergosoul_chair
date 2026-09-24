@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { FaBook, FaPlus } from 'react-icons/fa';
+import { FaBook } from 'react-icons/fa';
 import API from '../services/api';
+import ImageUploadField from '../components/ImageUploadField';
 
 export const AdminBlogs = () => {
   const [title, setTitle] = useState('');
@@ -119,16 +120,12 @@ export const AdminBlogs = () => {
             </div>
           </div>
 
-          <div className="space-y-1">
-            <span>Featured Image URL (Optional)</span>
-            <input
-              type="text"
-              placeholder="https://images.unsplash.com/photo-..."
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-              className="w-full p-2.5 border rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white outline-none"
-            />
-          </div>
+          <ImageUploadField
+            label="Featured Image"
+            subtitle="Optional"
+            value={image}
+            onChange={setImage}
+          />
 
           <button
             type="submit"

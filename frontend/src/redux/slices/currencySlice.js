@@ -23,8 +23,8 @@ const getInitialCurrency = () => {
   } catch (e) {
     // Ignore error
   }
-  // Fallback default
-  return { code: 'USD', symbol: '$', exchangeRate: 1.0 };
+  // Fallback default (Rupee)
+  return { code: 'INR', symbol: '₹', exchangeRate: 1.0 };
 };
 
 const initialState = {
@@ -58,11 +58,17 @@ const currencySlice = createSlice({
         state.loading = false;
         state.currencies = action.payload;
         
-        const explicit = localStorage.getItem('Ergosoul_currency_explicit') === 'true';
+        const isAdminRoute = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
+        const explicit = !isAdminRoute && localStorage.getItem('Ergosoul_currency_explicit') === 'true';
         const defaultCurr = action.payload.find(c => c.isDefault) || action.payload[0];
         
-        if (explicit) {
-          // If user explicitly chose a currency, try to keep it if it is still active
+        if (isAdminRoute && defaultCurr) {
+          state.selectedCurrency = defaultCurr;
+          try {
+            localStorage.setItem('Ergosoul_currency', JSON.stringify(defaultCurr));
+          } catch (e) {}
+        } else if (explicit) {
+          // If user explicitly chose a currency in showroom, try to keep it if it is still active
           const currentSelected = state.selectedCurrency;
           const matched = action.payload.find(c => c.code === currentSelected.code);
           if (matched) {

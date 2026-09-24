@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaClock, FaUser, FaArrowRight } from 'react-icons/fa';
-import API from '../services/api';
+import API, { getImageUrl } from '../services/api';
 
 export const Blogs = () => {
   const [blogs, setBlogs] = useState([]);
@@ -48,7 +48,7 @@ export const Blogs = () => {
               <div className="space-y-4">
                 <Link to={`/blog/${blog.slug}`} className="block aspect-[16/10] overflow-hidden bg-gray-50">
                   <img
-                    src={blog.image}
+                    src={getImageUrl(blog.image)}
                     alt={blog.title}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   />

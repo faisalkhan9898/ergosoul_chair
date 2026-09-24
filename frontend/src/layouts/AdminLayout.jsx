@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { FaChartBar, FaBoxes, FaClipboardList, FaTicketAlt, FaHome, FaSignOutAlt, FaUserShield, FaBook, FaBars, FaTimes, FaGlobe, FaPercentage, FaLayerGroup, FaFileAlt } from 'react-icons/fa';
 import { logout } from '../redux/slices/authSlice';
 import { initializeTheme, toggleTheme } from '../redux/slices/themeSlice';
+import { fetchActiveCurrencies } from '../redux/slices/currencySlice';
 import { FaSun, FaMoon } from 'react-icons/fa';
 
 export const AdminLayout = () => {
@@ -16,6 +17,7 @@ export const AdminLayout = () => {
 
   useEffect(() => {
     dispatch(initializeTheme());
+    dispatch(fetchActiveCurrencies());
     
     // Auth Guard check: Redirect if not admin
     if (!loading) {

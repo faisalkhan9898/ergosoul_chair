@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { FaGlobe, FaTrashAlt, FaEdit, FaCheckCircle, FaTimesCircle, FaStar } from 'react-icons/fa';
 import API from '../services/api';
+import { fetchActiveCurrencies, setSelectedCurrency } from '../redux/slices/currencySlice';
 
 const PREDEFINED_CURRENCIES = [
   { code: 'USD', symbol: '$', name: 'US Dollar (USD)', defaultRate: 1.0 },
@@ -18,6 +20,7 @@ const PREDEFINED_CURRENCIES = [
 ];
 
 export const AdminCurrencies = () => {
+  const dispatch = useDispatch();
   const [currencies, setCurrencies] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -77,14 +80,21 @@ export const AdminCurrencies = () => {
 
     try {
       if (editingId) {
-        await API.put(`/currencies/${editingId}`, payload);
+        const res = await API.put(`/currencies/${editingId}`, payload);
         setFormSuccess('Currency updated successfully!');
+        if (isDefault) {
+          dispatch(setSelectedCurrency(res.data.currency || payload));
+        }
       } else {
-        await API.post('/currencies', payload);
+        const res = await API.post('/currencies', payload);
         setFormSuccess('Currency created successfully!');
+        if (isDefault) {
+          dispatch(setSelectedCurrency(res.data.currency || payload));
+        }
       }
       resetForm();
       fetchCurrencies();
+      dispatch(fetchActiveCurrencies());
     } catch (err) {
       setFormError(err.response?.data?.message || 'Operation failed');
     } finally {
@@ -107,6 +117,7 @@ export const AdminCurrencies = () => {
     try {
       await API.delete(`/currencies/${id}`);
       fetchCurrencies();
+      dispatch(fetchActiveCurrencies());
     } catch (err) {
       const errMsg = err.response?.data?.message || 'Delete failed';
       console.error(errMsg);
@@ -118,8 +129,10 @@ export const AdminCurrencies = () => {
 
   const handleSetDefault = async (curr) => {
     try {
-      await API.put(`/currencies/${curr._id}`, { ...curr, isDefault: true });
+      const res = await API.put(`/currencies/${curr._id}`, { ...curr, isDefault: true });
       fetchCurrencies();
+      dispatch(setSelectedCurrency(res.data.currency || { ...curr, isDefault: true }));
+      dispatch(fetchActiveCurrencies());
     } catch (err) {
       alert(err.response?.data?.message || 'Update failed');
     }
@@ -129,6 +142,7 @@ export const AdminCurrencies = () => {
     try {
       await API.put(`/currencies/${curr._id}`, { ...curr, isActive: !curr.isActive });
       fetchCurrencies();
+      dispatch(fetchActiveCurrencies());
     } catch (err) {
       alert(err.response?.data?.message || 'Update failed');
     }

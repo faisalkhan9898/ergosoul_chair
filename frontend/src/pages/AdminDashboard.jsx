@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaDollarSign, FaShoppingCart, FaUsers, FaPercent, FaExclamationTriangle } from 'react-icons/fa';
 import API from '../services/api';
+import { useCurrency } from '../hooks/useCurrency';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -28,6 +29,7 @@ ChartJS.register(
 );
 
 export const AdminDashboard = () => {
+  const { currencySymbol, formatPrice } = useCurrency();
   const [metrics, setMetrics] = useState(null);
   const [lowStock, setLowStock] = useState([]);
   const [recentOrders, setRecentOrders] = useState([]);
@@ -49,7 +51,7 @@ export const AdminDashboard = () => {
           labels: chartData.map(c => c.month),
           datasets: [
             {
-              label: 'Revenue ($)',
+              label: `Revenue (${currencySymbol})`,
               data: chartData.map(c => c.revenue),
               borderColor: '#F59E0B', // Amber gold
               backgroundColor: 'rgba(245, 158, 11, 0.1)',
@@ -77,7 +79,7 @@ export const AdminDashboard = () => {
 
   // Cards layout
   const cards = [
-    { label: 'Total Revenue', value: `$${metrics.totalRevenue}`, icon: <FaDollarSign />, color: 'text-green-500 bg-green-500/10' },
+    { label: 'Total Revenue', value: formatPrice(metrics.totalRevenue), icon: <FaDollarSign />, color: 'text-green-500 bg-green-500/10' },
     { label: 'Total Orders', value: metrics.totalOrders, icon: <FaShoppingCart />, color: 'text-blue-500 bg-blue-500/10' },
     { label: 'Total Customers', value: metrics.totalCustomers, icon: <FaUsers />, color: 'text-amber-500 bg-amber-500/10' },
     { label: 'Conversion Rate', value: `${metrics.conversionRate}%`, icon: <FaPercent />, color: 'text-purple-500 bg-purple-500/10' }

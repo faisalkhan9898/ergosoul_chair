@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { FaPlus, FaEdit, FaTrashAlt, FaTimes, FaUpload, FaSearch, FaLayerGroup, FaThList, FaTable, FaBoxes, FaTags, FaFolderPlus } from 'react-icons/fa';
-import API from '../services/api';
+import API, { getImageUrl } from '../services/api';
 import { useCurrency } from '../hooks/useCurrency';
+import ImageUploadField from '../components/ImageUploadField';
 
 export const AdminProducts = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { formatPrice } = useCurrency();
+  const { formatPrice, currencySymbol } = useCurrency();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -775,23 +776,35 @@ export const AdminProducts = () => {
               {/* Row 2: Pricing and stock */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-1">
-                  <span className="text-gray-400">Retail Price ($)</span>
-                  <input
-                    type="number"
-                    required
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="w-full p-2.5 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-gray-900 dark:text-white outline-none"
-                  />
+                  <span className="text-gray-400">Retail Price ({currencySymbol})</span>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2.5 text-gray-400 font-bold select-none text-sm pointer-events-none">
+                      {currencySymbol}
+                    </span>
+                    <input
+                      type="number"
+                      required
+                      placeholder={`e.g. ${currencySymbol === '₹' ? '14999' : '199'}`}
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                      className="w-full pl-8 p-2.5 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-gray-900 dark:text-white outline-none"
+                    />
+                  </div>
                 </div>
                 <div className="space-y-1">
-                  <span className="text-gray-400">Old Price Slashed ($ - Optional)</span>
-                  <input
-                    type="number"
-                    value={oldPrice}
-                    onChange={(e) => setOldPrice(e.target.value)}
-                    className="w-full p-2.5 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-gray-900 dark:text-white outline-none"
-                  />
+                  <span className="text-gray-400">Old Price Slashed ({currencySymbol} - Optional)</span>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2.5 text-gray-400 font-bold select-none text-sm pointer-events-none">
+                      {currencySymbol}
+                    </span>
+                    <input
+                      type="number"
+                      placeholder={`e.g. ${currencySymbol === '₹' ? '19999' : '249'}`}
+                      value={oldPrice}
+                      onChange={(e) => setOldPrice(e.target.value)}
+                      className="w-full pl-8 p-2.5 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-gray-900 dark:text-white outline-none"
+                    />
+                  </div>
                 </div>
                 <div className="space-y-1">
                   <span className="text-gray-400">Units in Stock</span>
@@ -996,16 +1009,12 @@ export const AdminProducts = () => {
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <span>Cover Image URL (For Homepage Carousel)</span>
-                <input
-                  type="text"
-                  placeholder="https://images.unsplash.com/photo-..."
-                  value={quickDeptImage}
-                  onChange={(e) => setQuickDeptImage(e.target.value)}
-                  className="w-full p-2.5 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-gray-900 dark:text-white outline-none text-xs"
-                />
-              </div>
+              <ImageUploadField
+                label="Cover Image"
+                subtitle="For Homepage Carousel"
+                value={quickDeptImage}
+                onChange={setQuickDeptImage}
+              />
 
               <div className="space-y-1">
                 <span>Subcategories (Comma separated)</span>
@@ -1048,7 +1057,18 @@ export const AdminProducts = () => {
                     className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800/60 rounded-xl border dark:border-gray-700/50"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="text-base">{cat.icon}</span>
+                      {cat.image ? (
+                        <img
+                          src={getImageUrl(cat.image)}
+                          alt={cat.name}
+                          className="w-8 h-8 rounded-lg object-cover border dark:border-gray-750 flex-shrink-0"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
+                        />
+                      ) : (
+                        <span className="text-base">{cat.icon}</span>
+                      )}
                       <div>
                         <span className="font-bold text-gray-900 dark:text-white text-xs">{cat.name}</span>
                         <span className="text-[10px] text-gray-400 block">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaArrowRight, FaShippingFast, FaShieldAlt, FaTools, FaQuoteLeft, FaStar, FaChevronDown } from 'react-icons/fa';
-import API from '../services/api';
+import API, { getImageUrl } from '../services/api';
 import ProductCard from '../components/ProductCard';
 
 // Swiper slider imports
@@ -107,7 +107,7 @@ export const Home = () => {
                   className="relative group rounded-2xl overflow-hidden aspect-[4/3] shadow-premium block bg-gray-100"
                 >
                   <img
-                    src={cat.image}
+                    src={getImageUrl(cat.image)}
                     alt={cat.name}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 brightness-95"
                   />

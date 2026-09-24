@@ -31,6 +31,7 @@ app.use('/api/analytics', require('./routes/analytics.routes'));
 app.use('/api/currencies', require('./routes/currency.routes'));
 app.use('/api/taxes', require('./routes/tax.routes'));
 app.use('/api/categories', require('./routes/category.routes'));
+app.use('/api/upload', require('./routes/upload.routes'));
 app.use('/api/reports', require('./routes/report.routes'));
 
 // Welcome route
